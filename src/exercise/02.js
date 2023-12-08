@@ -6,8 +6,10 @@ import * as React from 'react'
 function Greeting({initialName = ''}) {
   // 🐨 initialize the state to the value from localStorage
   // 💰 window.localStorage.getItem('name') ?? initialName
+
+  // by passing a function to the useState parament, we only read the localStorage once (when we first render)
   const [name, setName] = React.useState(
-    window.localStorage.getItem('name') || initialName,
+    () => window.localStorage.getItem('name') || initialName,
   )
 
   // 🐨 Here's where you'll use `React.useEffect`.
