@@ -2,22 +2,11 @@
 // http://localhost:3000/isolated/exercise/04.js
 
 import * as React from 'react'
-
-const useLocalStorage = (key, initialValue = '') => {
-  const [current, setCurrent] = React.useState(
-    () => JSON.parse(window.localStorage.getItem(key)) || initialValue,
-  )
-
-  React.useEffect(() => {
-    window.localStorage.setItem(key, JSON.stringify(current))
-  }, [key, current, setCurrent])
-
-  return [current, setCurrent]
-}
+import {useLocalStorageState} from '../utils'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = useLocalStorage(
+  const [squares, setSquares] = useLocalStorageState(
     'tictactoe',
     React.useState(Array(9).fill(null)),
   )
