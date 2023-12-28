@@ -6,10 +6,12 @@ import {useLocalStorageState} from '../utils'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = useLocalStorageState(
-    'tictactoe',
+  const [squaresLog, setSquares] = useLocalStorageState('tictactoe', [
     React.useState(Array(9).fill(null)),
-  )
+  ])
+
+  // The last squaresLog is the current squares
+  const squares = squaresLog[squaresLog.length - 1]
 
   // 🐨 We'll need the following bits of derived state:
   // - nextValue ('X' or 'O')
@@ -43,13 +45,13 @@ function Board() {
     squaresCopy[square] = nextValue
     //
     // 🐨 set the squares to your copy
-    setSquares(squaresCopy)
+    setSquares(prevSquaresLog => [...prevSquaresLog, squaresCopy])
   }
 
   function restart() {
     // 🐨 reset the squares
     // 💰 `Array(9).fill(null)` will do it!
-    setSquares(Array(9).fill(null))
+    setSquares([Array(9).fill(null)])
   }
 
   function renderSquare(i) {
@@ -60,29 +62,58 @@ function Board() {
     )
   }
 
-  return (
-    <div>
-      {/* 🐨 put the status in the div below */}
-      <div className="status">{status}</div>
+  function renderLog(i) {
+    let message = i === 0 ? 'Go to game start' : `Go to move #${i}`
+    const isCurrentStep = i === squaresLog.length - 1
 
-      <div className="board-row">
-        {renderSquare(0)}
-        {renderSquare(1)}
-        {renderSquare(2)}
-      </div>
-      <div className="board-row">
-        {renderSquare(3)}
-        {renderSquare(4)}
-        {renderSquare(5)}
-      </div>
-      <div className="board-row">
-        {renderSquare(6)}
-        {renderSquare(7)}
-        {renderSquare(8)}
-      </div>
-      <button className="restart" onClick={restart}>
-        restart
+    if (isCurrentStep) {
+      message += ' (current)'
+    }
+
+    return (
+      <button onClick={() => goToStep(i)} disabled={isCurrentStep}>
+        {message}
       </button>
+    )
+  }
+
+  function goToStep(stepPosition) {
+    const newSquaresLog = squaresLog.slice(0, stepPosition + 1)
+    setSquares(newSquaresLog)
+  }
+
+  return (
+    <div style={{display: 'flex'}}>
+      <div>
+        {/* 🐨 put the status in the div below */}
+        <div className="status">{status}</div>
+
+        <div className="board-row">
+          {renderSquare(0)}
+          {renderSquare(1)}
+          {renderSquare(2)}
+        </div>
+        <div className="board-row">
+          {renderSquare(3)}
+          {renderSquare(4)}
+          {renderSquare(5)}
+        </div>
+        <div className="board-row">
+          {renderSquare(6)}
+          {renderSquare(7)}
+          {renderSquare(8)}
+        </div>
+        <button className="restart" onClick={restart}>
+          restart
+        </button>
+      </div>
+      <div style={{}}>
+        <ul>
+          {squaresLog.map((game, i) => (
+            <li key={`game-${i}`}>{renderLog(i)}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
