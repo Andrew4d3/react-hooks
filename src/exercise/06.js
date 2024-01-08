@@ -22,9 +22,20 @@ const STATUS = {
 
 function PokemonInfo({pokemonName}) {
   // 🐨 Have state for the pokemon (null)
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState(null)
-  const [status, setStatus] = React.useState(STATUS.idle)
+  // const [pokemon, setPokemon] = React.useState(null)
+  // const [error, setError] = React.useState(null)
+  // const [status, setStatus] = React.useState(STATUS.idle)
+
+  const initialState = {
+    pokemon: null,
+    error: null,
+    status: STATUS.idle,
+  }
+
+  const [state, setState] = React.useState(initialState)
+
+  const {pokemon, error, status} = state
+
   // 🐨 use React.useEffect where the callback should be called whenever the
   // pokemon name changes.
   // 💰 DON'T FORGET THE DEPENDENCIES ARRAY!
@@ -42,14 +53,21 @@ function PokemonInfo({pokemonName}) {
     const fetchFn = async () => {
       try {
         const pokemonData = await fetchPokemon(pokemonName)
-        setPokemon(pokemonData)
-        setStatus(STATUS.resolved)
+
+        setState({
+          pokemon: pokemonData,
+          status: STATUS.resolved,
+        })
       } catch (error) {
-        setError(error)
-        setStatus(STATUS.rejected)
+        setState({
+          error,
+          status: STATUS.rejected,
+        })
       }
     }
-    setStatus(STATUS.pending)
+    setState({
+      status: STATUS.pending,
+    })
     fetchFn()
   }, [pokemonName])
   // 🐨 return the following things based on the `pokemon` state and `pokemonName` prop:
