@@ -13,10 +13,18 @@ import {
   PokemonDataView,
 } from '../pokemon'
 
+const STATUS = {
+  idle: 'idle',
+  pending: 'pending',
+  resolved: 'resolved',
+  rejected: 'rejected',
+}
+
 function PokemonInfo({pokemonName}) {
   // 🐨 Have state for the pokemon (null)
   const [pokemon, setPokemon] = React.useState(null)
   const [error, setError] = React.useState(null)
+  const [status, setStatus] = React.useState(STATUS.idle)
   // 🐨 use React.useEffect where the callback should be called whenever the
   // pokemon name changes.
   // 💰 DON'T FORGET THE DEPENDENCIES ARRAY!
@@ -34,12 +42,14 @@ function PokemonInfo({pokemonName}) {
     const fetchFn = async () => {
       try {
         const pokemonData = await fetchPokemon(pokemonName)
-        setError(null)
         setPokemon(pokemonData)
+        setStatus(STATUS.resolved)
       } catch (error) {
         setError(error)
+        setStatus(STATUS.rejected)
       }
     }
+    setStatus(STATUS.pending)
     fetchFn()
   }, [pokemonName])
   // 🐨 return the following things based on the `pokemon` state and `pokemonName` prop:
@@ -47,7 +57,7 @@ function PokemonInfo({pokemonName}) {
   //   2. pokemonName but no pokemon: <PokemonInfoFallback name={pokemonName} />
   //   3. pokemon: <PokemonDataView pokemon={pokemon} />
 
-  if (error) {
+  if (status === STATUS.rejected) {
     return (
       <div role="alert">
         There was an error:{' '}
@@ -56,13 +66,15 @@ function PokemonInfo({pokemonName}) {
     )
   }
 
-  if (!pokemonName) {
+  if (status === STATUS.idle) {
     return 'Submit a pokemon'
   }
 
-  if (!pokemon) {
+  if (status === STATUS.pending) {
     return <PokemonInfoFallback name={pokemonName} />
   }
+
+  // if status is resolved
 
   return <PokemonDataView pokemon={pokemon} />
 }
