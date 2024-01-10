@@ -134,7 +134,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary FallbackMessage={FallbackMessage}>
+        <ErrorBoundary key={pokemonName} FallbackMessage={FallbackMessage}>
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>
