@@ -21,11 +21,12 @@ const STATUS = {
   rejected: 'rejected',
 }
 
-function FallbackMessage({error}) {
+function FallbackMessage({error, resetErrorBoundary}) {
   return (
     <div role="alert">
       There was an error:{' '}
       <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try Again</button>
     </div>
   )
 }
@@ -113,7 +114,10 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary key={pokemonName} FallbackComponent={FallbackMessage}>
+        <ErrorBoundary
+          FallbackComponent={FallbackMessage}
+          onReset={() => setPokemonName('')}
+        >
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>
@@ -123,4 +127,4 @@ function App() {
 
 export default App
 
-// TODO do lesson 70 excersise
+// TODO implement resetError boundary https://github.com/bvaughn/react-error-boundary
